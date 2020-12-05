@@ -1,0 +1,25 @@
+[tool.poetry]
+name = "graia-scheduler"
+version = "0.0.1"
+description = "a scheduler for graia framework"
+authors = ["GreyElaina <31543961+GreyElaina@users.noreply.github.com>"]
+license = "MIT"
+packages = [
+    { include = "graia", from = "src" }
+]
+
+[[tool.poetry.source]]
+name = "tuna-tsinghua"
+default = false
+url = "https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple/"
+
+[tool.poetry.dependencies]
+python = "^3.6"
+graia-broadcast = "^0.5.3"
+croniter = "^0.3.36"
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
