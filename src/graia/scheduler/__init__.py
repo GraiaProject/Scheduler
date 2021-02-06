@@ -6,7 +6,7 @@ Timer = Iterable[datetime]
 from asyncio import AbstractEventLoop
 
 from graia.broadcast import Broadcast
-from graia.broadcast.entities.decorater import Decorater
+from graia.broadcast.entities.decorator import Decorator
 from graia.broadcast.entities.dispatcher import BaseDispatcher
 from .task import SchedulerTask
 
@@ -21,7 +21,7 @@ class GraiaScheduler:
         self.broadcast = broadcast
     
     def schedule(self, timer: Timer, cancelable: Optional[bool] = False,
-        decorators: Optional[List[Decorater]] = None,
+        decorators: Optional[List[Decorator]] = None,
         dispatchers: List[BaseDispatcher] = None,
         enableInternalAccess: Optional[bool] = False
     ):

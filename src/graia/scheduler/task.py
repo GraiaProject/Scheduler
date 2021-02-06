@@ -1,7 +1,7 @@
 import traceback
 from typing import Any, Callable, Coroutine, Generator, List, Optional, Tuple, Type, Union
 import asyncio
-from graia.broadcast.entities.decorater import Decorater
+from graia.broadcast.entities.decorator import Decorator
 from graia.broadcast.entities.dispatcher import BaseDispatcher
 from graia.broadcast.entities.exectarget import ExecTarget
 from graia.scheduler.exception import AlreadyStarted
@@ -23,7 +23,7 @@ class SchedulerTask:
         Callable,
         BaseDispatcher
     ]]
-    decorators: List[Decorater]
+    decorators: List[Decorator]
     enableInternalAccess: bool = False
 
     cancelable: bool = False
@@ -53,7 +53,7 @@ class SchedulerTask:
             Callable,
             BaseDispatcher
         ]]] = None,
-        decorators: Optional[List[Decorater]] = None,
+        decorators: Optional[List[Decorator]] = None,
         enableInternalAccess: bool = False,
     ) -> None:
         self.target = target
@@ -88,7 +88,7 @@ class SchedulerTask:
                 target=ExecTarget(
                     callable=self.target,
                     inline_dispatchers=self.dispatchers,
-                    headless_decoraters=self.decorators,
+                    headless_decorators=self.decorators,
                     enable_internal_access=self.enableInternalAccess
                 ),
                 event=SchedulerTaskExecute()
