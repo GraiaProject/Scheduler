@@ -28,7 +28,7 @@ class GraiaScheduler:
         def wrapper(func):
             task = SchedulerTask(
                 func, timer, self.broadcast, self.loop, cancelable,
-                dispatchers, decorators, enableInternalAccess
+                dispatchers, decorators
             )
             self.schedule_tasks.append(task)
             task.setup_task()

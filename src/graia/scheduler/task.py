@@ -7,7 +7,6 @@ from graia.broadcast.entities.exectarget import ExecTarget
 from graia.scheduler.exception import AlreadyStarted
 
 from graia.scheduler.utilles import EnteredRecord, print_track_async
-from .event import SchedulerTaskExecute
 from graia.broadcast import Broadcast
 from datetime import datetime
 from . import Timer
@@ -54,7 +53,6 @@ class SchedulerTask:
             BaseDispatcher
         ]]] = None,
         decorators: Optional[List[Decorator]] = None,
-        enableInternalAccess: bool = False,
     ) -> None:
         self.target = target
         self.timer = timer
@@ -63,7 +61,6 @@ class SchedulerTask:
         self.cancelable = cancelable
         self.dispatchers = dispatchers or []
         self.decorators = decorators or []
-        self.enableInternalAccess = enableInternalAccess
         self.sleep_record = EnteredRecord()
         self.started_record = EnteredRecord()
 
@@ -89,9 +86,7 @@ class SchedulerTask:
                     callable=self.target,
                     inline_dispatchers=self.dispatchers,
                     headless_decorators=self.decorators,
-                    enable_internal_access=self.enableInternalAccess
                 ),
-                event=SchedulerTaskExecute()
             ), False, None)
     
     @print_track_async
