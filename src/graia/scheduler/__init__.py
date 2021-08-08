@@ -1,6 +1,8 @@
 from typing import Iterable, List, Optional
 from datetime import datetime
 
+from graia.broadcast.typing import T_Dispatcher
+
 Timer = Iterable[datetime]
 
 from asyncio import AbstractEventLoop
@@ -20,15 +22,14 @@ class GraiaScheduler:
         self.loop = loop
         self.broadcast = broadcast
     
-    def schedule(self, timer: Timer, cancelable: Optional[bool] = False,
+    def schedule(self, timer: Timer, cancelable: bool = False,
+        dispatchers: List[T_Dispatcher] = None,
         decorators: Optional[List[Decorator]] = None,
-        dispatchers: List[BaseDispatcher] = None,
-        enableInternalAccess: Optional[bool] = False
     ):
         def wrapper(func):
             task = SchedulerTask(
                 func, timer, self.broadcast, self.loop, cancelable,
-                dispatchers, decorators, enableInternalAccess
+                dispatchers, decorators
             )
             self.schedule_tasks.append(task)
             task.setup_task()

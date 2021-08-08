@@ -15,9 +15,8 @@ class GraiaSchedulerBehaviour(Behaviour):
             self.scheduler.schedule(
                 cube.metaclass.timer,
                 cube.metaclass.cancelable,
-                cube.metaclass.decorators,
                 cube.metaclass.dispatchers,
-                cube.metaclass.enableInternalAccess
+                cube.metaclass.decorators,
             )(cube.content)
         else:
             return

@@ -1,13 +1,12 @@
 import traceback
-from typing import Any, Callable, Coroutine, Generator, List, Optional, Tuple, Type, Union
+from typing import Any, Callable, Generator, List, Optional
 import asyncio
 from graia.broadcast.entities.decorator import Decorator
-from graia.broadcast.entities.dispatcher import BaseDispatcher
 from graia.broadcast.entities.exectarget import ExecTarget
+from graia.broadcast.typing import T_Dispatcher
 from graia.scheduler.exception import AlreadyStarted
 
 from graia.scheduler.utilles import EnteredRecord, print_track_async
-from .event import SchedulerTaskExecute
 from graia.broadcast import Broadcast
 from datetime import datetime
 from . import Timer
@@ -18,13 +17,8 @@ class SchedulerTask:
     task: asyncio.Task
 
     broadcast: Broadcast
-    dispatchers: List[Union[
-        Type[BaseDispatcher],
-        Callable,
-        BaseDispatcher
-    ]]
+    dispatchers: List[T_Dispatcher]
     decorators: List[Decorator]
-    enableInternalAccess: bool = False
 
     cancelable: bool = False
     stoped: bool = False
@@ -48,13 +42,8 @@ class SchedulerTask:
         broadcast: Broadcast,
         loop: asyncio.AbstractEventLoop,
         cancelable: bool = False,
-        dispatchers: Optional[List[Union[
-            Type[BaseDispatcher],
-            Callable,
-            BaseDispatcher
-        ]]] = None,
+        dispatchers: Optional[List[T_Dispatcher]] = None,
         decorators: Optional[List[Decorator]] = None,
-        enableInternalAccess: bool = False,
     ) -> None:
         self.target = target
         self.timer = timer
@@ -63,7 +52,6 @@ class SchedulerTask:
         self.cancelable = cancelable
         self.dispatchers = dispatchers or []
         self.decorators = decorators or []
-        self.enableInternalAccess = enableInternalAccess
         self.sleep_record = EnteredRecord()
         self.started_record = EnteredRecord()
 
@@ -81,17 +69,15 @@ class SchedulerTask:
             if next_execute_time >= now:
                 yield (next_execute_time - now).total_seconds()
     
-    def coroutine_generator(self) -> Generator[Tuple[Coroutine, bool, Optional[float]], None, None]:
+    def coroutine_generator(self):
         for sleep_interval in self.sleep_interval_generator():
             yield (asyncio.sleep(sleep_interval), True, sleep_interval)
             yield (self.broadcast.Executor(
                 target=ExecTarget(
                     callable=self.target,
                     inline_dispatchers=self.dispatchers,
-                    headless_decorators=self.decorators,
-                    enable_internal_access=self.enableInternalAccess
+                    decorators=self.decorators,
                 ),
-                event=SchedulerTaskExecute()
             ), False, None)
     
     @print_track_async
