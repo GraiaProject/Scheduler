@@ -1,15 +1,19 @@
 """该模块提供一些便捷的 Timer"""
 
 from datetime import datetime, timedelta
+
 from croniter import croniter
+
 
 def every(**kwargs):
     while True:
         yield datetime.now() + timedelta(**kwargs)
 
+
 def every_second():
     """每秒钟执行一次"""
     yield from every(seconds=1)
+
 
 def every_custom_seconds(seconds: int):
     """每 seconds 秒执行一次
@@ -19,9 +23,11 @@ def every_custom_seconds(seconds: int):
     """
     yield from every(seconds=seconds)
 
+
 def every_minute():
     """每分钟执行一次."""
     yield from every(minutes=1)
+
 
 def every_custom_minutes(minutes: int):
     """每 minutes 分执行一次
@@ -31,9 +37,11 @@ def every_custom_minutes(minutes: int):
     """
     yield from every(minutes=minutes)
 
+
 def every_hours():
     """每小时执行一次."""
     yield from every(hours=1)
+
 
 def every_custom_hours(hours: int):
     """每 hours 小时执行一次
@@ -42,6 +50,7 @@ def every_custom_hours(hours: int):
         hours (int): 距离下一次执行的时间间隔, 单位为小时
     """
     yield from every(hours=hours)
+
 
 def crontabify(pattern: str):
     """使用类似 crontab 的方式生成计时器
