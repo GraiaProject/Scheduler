@@ -1,3 +1,4 @@
 {
-    "python.pythonPath": "c:\\Users\\Elaina\\AppData\\Local\\pypoetry\\Cache\\virtualenvs\\graia-scheduler-ytw8Y8am-py3.8\\Scripts\\python.exe"
+    "python.pythonPath": "c:\\Users\\Elaina\\AppData\\Local\\pypoetry\\Cache\\virtualenvs\\graia-scheduler-ytw8Y8am-py3.8\\Scripts\\python.exe",
+    "python.formatting.provider": "black"
 }

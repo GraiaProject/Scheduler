@@ -1,13 +1,59 @@
 """该模块提供一些便捷的 Timer"""
 
 from datetime import datetime, timedelta
+from typing import Optional
 
 from croniter import croniter
 
+from graia.scheduler.utilles import TimeObject, to_datetime
+
+
+class Ticker:
+    """简单的时间点生成器.
+
+    Attributes:
+        start_point (datetime): 开始时间.
+        delta (timedelta): 每次偏移的时间.
+
+    Yields:
+        datetime: 生成的时间点.
+    """
+
+    start_point: datetime
+    delta: timedelta
+
+    def __init__(self, base_datetime: Optional[TimeObject] = None, **kwargs):
+        self.start_point = (
+            datetime.now() if not base_datetime else to_datetime(base_datetime)
+        )
+        self.delta = timedelta(**kwargs)
+
+    def __iter__(self):
+        """生成时间点. 注意, 在本方法调用后, TimeTicker.start_at() 方法对于已开始的迭代无效.
+
+        Yields:
+            datetime: 生成的时间点.
+        """
+        next_exec = self.start_point
+        while True:
+            next_exec += self.delta
+            yield next_exec
+
+    def start_at(self, base_datetime: TimeObject) -> "Ticker":
+        """重置开始时间点.
+
+        Args:
+            base_datetime (TimeObject): 新的开始时间对象, 若无法推断绝对时间点, 则基于当前 self.start_point 计算.
+
+        Returns:
+            Ticker: 返回本对象以允许进一步操作.
+        """
+        self.start_point = to_datetime(base_datetime, self.start_point)
+        return self
+
 
 def every(**kwargs):
-    while True:
-        yield datetime.now() + timedelta(**kwargs)
+    yield from Ticker(**kwargs)
 
 
 def every_second():
@@ -52,13 +98,17 @@ def every_custom_hours(hours: int):
     yield from every(hours=hours)
 
 
-def crontabify(pattern: str):
+def crontabify(pattern: str, base_datetime: Optional[TimeObject] = None):
     """使用类似 crontab 的方式生成计时器
 
     Args:
-        pattern (str): crontab 的设置, 具体请合理使用搜索引擎
+        pattern (str): [description]
+        base_datetime (Optional[TimeObject], optional): 开始时间. 默认为 datetime.now().
+
+    Yields:
+        [type]: [description]
     """
-    base_datetime = datetime.now()
+    base_datetime = datetime.now() if not base_datetime else to_datetime(base_datetime)
     crontab_iter = croniter(pattern, base_datetime)
     while True:
         yield crontab_iter.get_next(datetime)

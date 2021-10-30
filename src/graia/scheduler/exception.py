@@ -1,6 +1,4 @@
 class AlreadyStarted(Exception):
-    """
-    本SchedulerTask已经被启动了.
-    """
+    """本 SchedulerTask 已经被启动了."""
 
     pass

@@ -44,7 +44,7 @@ class SchedulerTask:
         target: Callable[..., Any],
         timer: Timer,
         broadcast: Broadcast,
-        loop: asyncio.AbstractEventLoop,
+        loop: Optional[asyncio.AbstractEventLoop] = None,
         cancelable: bool = False,
         dispatchers: Optional[List[T_Dispatcher]] = None,
         decorators: Optional[List[Decorator]] = None,
@@ -52,7 +52,7 @@ class SchedulerTask:
         self.target = target
         self.timer = timer
         self.broadcast = broadcast
-        self.loop = loop
+        self.loop = loop or asyncio.get_running_loop()
         self.cancelable = cancelable
         self.dispatchers = dispatchers or []
         self.decorators = decorators or []
@@ -60,6 +60,7 @@ class SchedulerTask:
         self.started_record = EnteredRecord()
 
     def setup_task(self) -> None:
+        """将本 SchedulerTask 作为 asyncio.Task 排入事件循环."""
         if not self.started_record.entered:  # 还未启动
             self.task = self.loop.create_task(self.run())
         else:
@@ -113,17 +114,23 @@ class SchedulerTask:
                     except Exception as e:
                         traceback.print_exc()
 
-    def stop_interval_gen(self) -> None:
+    def stop_gen_interval(self) -> None:
         if not self.stoped:
             self.stoped = True
 
     async def join(self, stop=False):
+        """阻塞直至当前 SchedulerTask 执行完毕.
+
+        Args:
+            stop (bool, optional): 是否停止当前 SchedulerTask 下一次运行. 默认为 False.
+        """
         if stop and not self.stoped:
-            self.stop_interval_gen()
+            self.stop_gen_interval()
 
         if self.task:
             await self.task
 
     def stop(self):
+        """停止当前 SchedulerTask."""
         if not self.task.cancelled():
             self.task.cancel()
