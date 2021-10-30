@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "graia-scheduler"
-version = "0.0.5"
+version = "0.0.6"
 description = "a scheduler for graia framework"
 authors = ["GreyElaina <31543961+GreyElaina@users.noreply.github.com>"]
 license = "MIT"
