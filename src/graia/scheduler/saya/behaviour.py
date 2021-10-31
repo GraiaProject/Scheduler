@@ -35,7 +35,7 @@ class GraiaSchedulerBehaviour(Behaviour):
             )
             if target_tasks:
                 target = target_tasks[0]
-                target.stop_interval_gen()
+                target.stop_gen_interval()
                 target.stop()
                 self.scheduler.schedule_tasks.remove(target)
         else:
