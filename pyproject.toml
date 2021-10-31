@@ -9,7 +9,7 @@ packages = [{ include = "graia", from = "src" }]
 [tool.poetry.dependencies]
 python = "^3.7"
 graia-broadcast = ">=0.12.1"
-croniter = "^0.3.36"
+croniter = "^1.0.0"
 dataclasses = { python = "<3.7", version = "*" }
 
 [tool.poetry.dev-dependencies]
