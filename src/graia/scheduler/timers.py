@@ -8,52 +8,14 @@ from croniter import croniter
 from graia.scheduler.utilles import TimeObject, to_datetime
 
 
-class Ticker:
-    """简单的时间点生成器.
-
-    Attributes:
-        start_point (datetime): 开始时间.
-        delta (timedelta): 每次偏移的时间.
-
-    Yields:
-        datetime: 生成的时间点.
-    """
-
-    start_point: datetime
-    delta: timedelta
-
-    def __init__(self, base_datetime: Optional[TimeObject] = None, **kwargs):
-        self.start_point = (
-            datetime.now() if not base_datetime else to_datetime(base_datetime)
-        )
-        self.delta = timedelta(**kwargs)
-
-    def __iter__(self):
-        """生成时间点. 注意, 在本方法调用后, TimeTicker.start_at() 方法对于已开始的迭代无效.
-
-        Yields:
-            datetime: 生成的时间点.
-        """
-        next_exec = self.start_point
-        while True:
-            next_exec += self.delta
-            yield next_exec
-
-    def start_at(self, base_datetime: TimeObject) -> "Ticker":
-        """重置开始时间点.
-
-        Args:
-            base_datetime (TimeObject): 新的开始时间对象, 若无法推断绝对时间点, 则基于当前 self.start_point 计算.
-
-        Returns:
-            Ticker: 返回本对象以允许进一步操作.
-        """
-        self.start_point = to_datetime(base_datetime, self.start_point)
-        return self
-
-
-def every(**kwargs):
-    yield from Ticker(**kwargs)
+def every(*, base_datetime: Optional[TimeObject] = None, **kwargs):
+    if not base_datetime:
+        current = datetime.now()
+    else:
+        current = to_datetime(base_datetime)
+    while True:
+        current += timedelta(**kwargs)
+        yield current
 
 
 def every_second():

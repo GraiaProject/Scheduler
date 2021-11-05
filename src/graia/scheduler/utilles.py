@@ -25,7 +25,7 @@ def print_track_async(func):
     return wrapper
 
 
-TimeObject = Union[datetime, timedelta, time, str, float]
+TimeObject = Union[datetime, time, str, float]
 
 
 def to_datetime(
