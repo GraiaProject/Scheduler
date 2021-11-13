@@ -20,12 +20,10 @@ from graia.broadcast import Broadcast
 from graia.scheduler import GraiaScheduler
 from graia.scheduler.timers import crontabify
 
-loop = asyncio.get_event_loop()
+loop = asyncio.new_event_loop()
 
-bcc = Broadcast(loop=loop, debug_flag=True)
-scheduler = GraiaScheduler(
-    loop, bcc
-)
+bcc = Broadcast(loop=loop)
+scheduler = GraiaScheduler(loop, bcc)
 
 @scheduler.schedule(crontabify("* * * * * *"))
 def something_scheduled():
