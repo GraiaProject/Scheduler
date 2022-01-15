@@ -27,7 +27,7 @@ scheduler = GraiaScheduler(loop, bcc)
 
 @scheduler.schedule(crontabify("* * * * * *"))
 def something_scheduled():
-    print("print every seconds.")
+    print("print every second.")
 
 loop.run_forever()
 ```
