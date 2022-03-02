@@ -6,6 +6,7 @@ from typing import Any, Callable, Generator, List, Optional
 from graia.broadcast import Broadcast
 from graia.broadcast.entities.decorator import Decorator
 from graia.broadcast.entities.exectarget import ExecTarget
+from graia.broadcast.exceptions import ExecutionStop, PropagationCancelled
 from graia.broadcast.typing import T_Dispatcher
 
 from graia.scheduler.exception import AlreadyStarted
@@ -106,11 +107,15 @@ class SchedulerTask:
                         if self.cancelable:
                             return
                         raise
+                    except (ExecutionStop, PropagationCancelled):
+                        pass
                     except Exception as e:
                         traceback.print_exc()
                 else:
                     try:
                         await asyncio.shield(coro)
+                    except (ExecutionStop, PropagationCancelled):
+                        pass
                     except Exception as e:
                         traceback.print_exc()
 
