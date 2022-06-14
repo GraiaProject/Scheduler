@@ -26,7 +26,7 @@ class GraiaSchedulerBehaviour(Behaviour):
 
         return True
 
-    def uninstall(self, cube: Cube) -> Any:
+    def release(self, cube: Cube) -> Any:
         if isinstance(cube.metaclass, SchedulerSchema):
             target_tasks = list(
                 filter(
@@ -42,3 +42,5 @@ class GraiaSchedulerBehaviour(Behaviour):
             return
 
         return True
+
+    uninstall = release
