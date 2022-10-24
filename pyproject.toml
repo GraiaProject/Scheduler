@@ -13,7 +13,7 @@ dependencies = [
 name = "graia-scheduler"
 version = "0.0.10"
 description = "a scheduler for graia framework"
-
+readme = "README.md"
 [project.optional-dependencies]
 saya = ["graia-saya>=0.0.16,<0.1"]
 
