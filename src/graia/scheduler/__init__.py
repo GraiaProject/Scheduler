@@ -28,7 +28,7 @@ class GraiaScheduler:
         self,
         timer: Timer,
         cancelable: bool = False,
-        dispatchers: List[T_Dispatcher] = None,
+        dispatchers: Optional[List[T_Dispatcher]] = None,
         decorators: Optional[List[Decorator]] = None,
     ):
         """计划一个新任务.

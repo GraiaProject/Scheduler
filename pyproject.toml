@@ -1,28 +1,39 @@
-[tool.poetry]
+[project]
+# PEP 621 project metadata
+# See https://www.python.org/dev/peps/pep-0621/
+authors = [
+    {name = "GreyElaina", email = "31543961+GreyElaina@users.noreply.github.com"},
+]
+license = {text = "MIT"}
+requires-python = ">=3.7,<4.0"
+dependencies = [
+    "graia-broadcast>=0.19.0",
+    "croniter<2.0.0,>=1.0.0",
+]
 name = "graia-scheduler"
-version = "0.0.8"
+version = "0.0.10"
 description = "a scheduler for graia framework"
-authors = ["GreyElaina <GreyElaina@outlook.com>"]
-license = "MIT"
-packages = [{ include = "graia", from = "src" }]
 
-[tool.poetry.dependencies]
-python = "^3.7"
-graia-broadcast = ">=0.12.1"
-croniter = "^1.0.0"
-dataclasses = { python = "<3.7", version = "*" }
+[project.optional-dependencies]
+saya = ["graia-saya>=0.0.16,<0.1"]
 
-[tool.poetry.dev-dependencies]
-graia-saya = "^0.0.13"
-black = "*"
-isort = "*"
+[project.urls]
+
+[tool.pdm]
+
+[tool.pdm.dev-dependencies]
+dev = [
+    "black>=22.6.0",
+    "isort>=5.10.1",
+    "graia-saya>=0.0.16",
+]
+
+[tool.pdm.build]
+includes = ["src/graia"]
 
 [tool.isort]
 profile = "black"
 
 [build-system]
-requires = ["poetry-core>=1.0.0"]
-build-backend = "poetry.core.masonry.api"
-
-[tool.poetry.extras]
-saya = ['graia-saya']
+requires = ["pdm-pep517>=1.0.0"]
+build-backend = "pdm.pep517.api"

@@ -8,7 +8,7 @@ from graia.broadcast.entities.decorator import Decorator
 from graia.broadcast.entities.exectarget import ExecTarget
 from graia.broadcast.exceptions import ExecutionStop, PropagationCancelled
 from graia.broadcast.typing import T_Dispatcher
-
+from graia.broadcast.builtin.event import ExceptionThrown
 from graia.scheduler.exception import AlreadyStarted
 from graia.scheduler.utilles import EnteredRecord, print_track_async
 
@@ -25,7 +25,7 @@ class SchedulerTask:
     decorators: List[Decorator]
 
     cancelable: bool = False
-    stoped: bool = False
+    stopped: bool = False
 
     sleep_record: EnteredRecord
     started_record: EnteredRecord
@@ -69,7 +69,7 @@ class SchedulerTask:
 
     def sleep_interval_generator(self) -> Generator[float, None, None]:
         for next_execute_time in self.timer:
-            if self.stoped:
+            if self.stopped:
                 return
             now = datetime.now()
             if next_execute_time >= now:
@@ -99,29 +99,31 @@ class SchedulerTask:
                         await coro
                     except asyncio.CancelledError:
                         return
-            else:  # 执行
-                if self.cancelable:
-                    try:
-                        await coro
-                    except asyncio.CancelledError:
-                        if self.cancelable:
-                            return
-                        raise
-                    except (ExecutionStop, PropagationCancelled):
-                        pass
-                    except Exception as e:
-                        traceback.print_exc()
-                else:
-                    try:
-                        await asyncio.shield(coro)
-                    except (ExecutionStop, PropagationCancelled):
-                        pass
-                    except Exception as e:
-                        traceback.print_exc()
+            # 执行
+            elif self.cancelable:
+                try:
+                    await coro
+                except asyncio.CancelledError:
+                    if self.cancelable:
+                        return
+                    raise
+                except (ExecutionStop, PropagationCancelled):
+                    pass
+                except Exception as e:
+                    traceback.print_exc()
+                    await self.broadcast.postEvent(ExceptionThrown(e, None))
+            else:
+                try:
+                    await asyncio.shield(coro)
+                except (ExecutionStop, PropagationCancelled):
+                    pass
+                except Exception as e:
+                    traceback.print_exc()
+                    await self.broadcast.postEvent(ExceptionThrown(e, None))
 
     def stop_gen_interval(self) -> None:
-        if not self.stoped:
-            self.stoped = True
+        if not self.stopped:
+            self.stopped = True
 
     async def join(self, stop=False):
         """阻塞直至当前 SchedulerTask 执行完毕.
@@ -129,7 +131,7 @@ class SchedulerTask:
         Args:
             stop (bool, optional): 是否停止当前 SchedulerTask 下一次运行. 默认为 False.
         """
-        if stop and not self.stoped:
+        if stop and not self.stopped:
             self.stop_gen_interval()
 
         if self.task:
