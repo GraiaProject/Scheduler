@@ -81,10 +81,7 @@ def crontabify(pattern: str, base: Optional[TimeObject] = None):
     Yields:
         [type]: [description]
     """
-    if base:
-        base = to_datetime(base)
-    else:
-        base = datetime.now()
+    base = to_datetime(base) if base else datetime.now()
     crontab_iter = croniter(pattern, base)
     while True:
         yield crontab_iter.get_next(datetime)

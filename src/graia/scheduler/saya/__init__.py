@@ -1,2 +1,2 @@
-from .behaviour import GraiaSchedulerBehaviour
-from .schema import SchedulerSchema
+from .behaviour import GraiaSchedulerBehaviour as GraiaSchedulerBehaviour
+from .schema import SchedulerSchema as SchedulerSchema

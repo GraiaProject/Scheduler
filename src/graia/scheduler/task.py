@@ -1,7 +1,7 @@
 import asyncio
 import traceback
 from datetime import datetime
-from typing import Any, Callable, Generator, List, Optional
+from typing import Any, Callable, Generator, List, Optional, Tuple, Awaitable
 
 from graia.broadcast import Broadcast
 from graia.broadcast.entities.decorator import Decorator
@@ -18,17 +18,17 @@ from . import Timer
 class SchedulerTask:
     target: Callable[..., Any]
     timer: Timer
-    task: asyncio.Task
+    task: Optional[asyncio.Task]
 
     broadcast: Broadcast
     dispatchers: List[T_Dispatcher]
     decorators: List[Decorator]
 
-    cancelable: bool = False
-    stopped: bool = False
+    cancelable: bool
+    stopped: bool
 
     sleep_record: EnteredRecord
-    started_record: EnteredRecord
+    run_record: EnteredRecord
 
     loop: asyncio.AbstractEventLoop
 
@@ -38,7 +38,7 @@ class SchedulerTask:
 
     @property
     def is_executing(self) -> bool:
-        return not self.sleep_record.entered
+        return self.run_record.entered and not self.sleep_record.entered
 
     def __init__(
         self,
@@ -55,17 +55,19 @@ class SchedulerTask:
         self.broadcast = broadcast
         self.loop = loop or asyncio.get_running_loop()
         self.cancelable = cancelable
+        self.task = None
+        self.stopped = False
         self.dispatchers = dispatchers or []
         self.decorators = decorators or []
         self.sleep_record = EnteredRecord()
-        self.started_record = EnteredRecord()
+        self.run_record = EnteredRecord()
 
-    def setup_task(self) -> None:
+    def setup_task(self) -> asyncio.Task:
         """将本 SchedulerTask 作为 asyncio.Task 排入事件循环."""
-        if not self.started_record.entered:  # 还未启动
-            self.task = self.loop.create_task(self.run())
-        else:
+        if self.task:
             raise AlreadyStarted("the scheduler task has been started!")
+        self.task = self.loop.create_task(self.run())
+        return self.task
 
     def sleep_interval_generator(self) -> Generator[float, None, None]:
         for next_execute_time in self.timer:
@@ -75,9 +77,9 @@ class SchedulerTask:
             if next_execute_time >= now:
                 yield (next_execute_time - now).total_seconds()
 
-    def coroutine_generator(self):
+    def coroutine_generator(self) -> Generator[Tuple[Awaitable[Any], bool], None, None]:
         for sleep_interval in self.sleep_interval_generator():
-            yield (asyncio.sleep(sleep_interval), True, sleep_interval)
+            yield (asyncio.sleep(sleep_interval), True)
             yield (
                 self.broadcast.Executor(
                     target=ExecTarget(
@@ -87,34 +89,26 @@ class SchedulerTask:
                     ),
                 ),
                 False,
-                None,
             )
 
     @print_track_async
     async def run(self) -> None:
-        for coro, waiting, sleep_interval in self.coroutine_generator():
-            if waiting:  # 是否为 asyncio.sleep 的 coro
-                with self.sleep_record:
-                    try:
-                        await coro
-                    except asyncio.CancelledError:
-                        return
-            # 执行
-            elif self.cancelable:
+        if self.run_record.entered:
+            raise AlreadyStarted("the scheduler task has been started!")
+        with self.run_record:
+            for coro, waiting in self.coroutine_generator():
+                if waiting:  # 是否为 asyncio.sleep 的 coro
+                    with self.sleep_record:
+                        try:
+                            await coro
+                        except asyncio.CancelledError:
+                            return
                 try:
-                    await coro
+                    await (coro if self.cancelable else asyncio.shield(coro))
                 except asyncio.CancelledError:
                     if self.cancelable:
                         return
                     raise
-                except (ExecutionStop, PropagationCancelled):
-                    pass
-                except Exception as e:
-                    traceback.print_exc()
-                    await self.broadcast.postEvent(ExceptionThrown(e, None))
-            else:
-                try:
-                    await asyncio.shield(coro)
                 except (ExecutionStop, PropagationCancelled):
                     pass
                 except Exception as e:
@@ -125,7 +119,7 @@ class SchedulerTask:
         if not self.stopped:
             self.stopped = True
 
-    async def join(self, stop=False):
+    async def join(self, stop: bool = False) -> None:
         """阻塞直至当前 SchedulerTask 执行完毕.
 
         Args:
@@ -136,8 +130,9 @@ class SchedulerTask:
 
         if self.task:
             await self.task
+        self.task = None
 
     def stop(self):
         """停止当前 SchedulerTask."""
-        if not self.task.cancelled():
+        if self.task and not self.task.cancelled():
             self.task.cancel()

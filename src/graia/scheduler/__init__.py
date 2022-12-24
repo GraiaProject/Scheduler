@@ -6,10 +6,10 @@ from graia.broadcast.typing import T_Dispatcher
 Timer = Iterable[datetime]
 
 from asyncio import AbstractEventLoop
+import asyncio
 
 from graia.broadcast import Broadcast
 from graia.broadcast.entities.decorator import Decorator
-from graia.broadcast.entities.dispatcher import BaseDispatcher
 
 from .task import SchedulerTask
 
@@ -54,7 +54,16 @@ class GraiaScheduler:
                 decorators,
             )
             self.schedule_tasks.append(task)
-            task.setup_task()
             return func
 
         return wrapper
+
+    async def run(self) -> None:
+        await asyncio.gather(*(task.setup_task() for task in self.schedule_tasks))
+
+    async def join(self, stop: bool = False) -> None:
+        await asyncio.gather(*(task.join(stop=stop) for task in self.schedule_tasks))
+
+    def stop(self) -> None:
+        for task in self.schedule_tasks:
+            task.stop()
