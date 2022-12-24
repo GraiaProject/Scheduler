@@ -12,6 +12,9 @@ from graia.broadcast import Broadcast
 from graia.broadcast.entities.decorator import Decorator
 
 from .task import SchedulerTask
+from typing import Callable, TypeVar
+
+T_Callable = TypeVar("T_Callable", bound=Callable)
 
 
 class GraiaScheduler:
@@ -38,7 +41,7 @@ class GraiaScheduler:
         cancelable: bool = False,
         dispatchers: Optional[List[T_Dispatcher]] = None,
         decorators: Optional[List[Decorator]] = None,
-    ):
+    ) -> Callable[[T_Callable], T_Callable]:
         """计划一个新任务.
 
         Args:
@@ -48,7 +51,7 @@ class GraiaScheduler:
             decorators (Optional[List[Decorator]], optional): 该任务要使用的 Decorators. 默认为空列表.
 
         Returns:
-            Callable[T_Callable, T_Callable]: 任务 函数/方法 包装器.
+            Callable[[T_Callable], T_Callable]: 任务 函数/方法 包装器.
         """
 
         def wrapper(func):

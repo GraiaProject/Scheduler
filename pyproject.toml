@@ -28,6 +28,13 @@ dev = [
     "isort>=5.10.1",
     "graia-saya>=0.0.16",
 ]
+docs = [
+    "mkdocs-material>=8.2.0",
+    "mkdocstrings[python]>=0.18.0",
+    "mkdocs-literate-nav>=0.4.0",
+    "mkdocs-section-index>=0.3.0",
+    "mkdocs-gen-files>=0.3.0",
+]
 
 [tool.pdm.build]
 includes = ["src/graia"]
@@ -38,3 +45,6 @@ profile = "black"
 [build-system]
 requires = ["pdm-pep517>=1.0.0"]
 build-backend = "pdm.pep517.api"
+
+[tool.pyright]
+ignore = ["docs/gen_ref.py"]
