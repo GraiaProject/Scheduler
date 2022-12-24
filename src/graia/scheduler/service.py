@@ -1,12 +1,18 @@
-from typing import Literal, Set, List
+from typing import Literal, Set
 from launart import Service, Launart
 from . import GraiaScheduler
 import asyncio
 
 
 class SchedulerService(Service):
-    def __init__(self, *schedulers: GraiaScheduler) -> None:
-        self.schedulers: List[GraiaScheduler] = list(schedulers)
+    """GraiaScheduler 的 Launart 服务
+
+    Args:
+        scheduler (GraiaScheduler): 任务计划器
+    """
+
+    def __init__(self, scheduler: GraiaScheduler) -> None:
+        self.scheduler = scheduler
 
     @property
     def required(self):
@@ -20,11 +26,10 @@ class SchedulerService(Service):
         async with self.stage("preparing"):
             pass  # Wait for preparation to complete, then we run tasks
 
-        fut = asyncio.gather(*(sched.run() for sched in self.schedulers))
+        tsk = asyncio.create_task(self.scheduler.run())
 
         async with self.stage("cleanup"):
             # Stop all schedule tasks
-            for sched in self.schedulers:
-                sched.stop()
-            await asyncio.gather(*(sched.join() for sched in self.schedulers))
-            await fut
+            self.scheduler.stop()
+            await self.scheduler.join()
+            await tsk

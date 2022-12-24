@@ -15,11 +15,19 @@ from .task import SchedulerTask
 
 
 class GraiaScheduler:
+    """任务计划器"""
+
     loop: AbstractEventLoop
     schedule_tasks: List[SchedulerTask]
     broadcast: Broadcast
 
     def __init__(self, loop: AbstractEventLoop, broadcast: Broadcast) -> None:
+        """初始化
+
+        Args:
+            loop (AbstractEventLoop): 事件循环
+            broadcast (Broadcast): 事件总线
+        """
         self.schedule_tasks = []
         self.loop = loop
         self.broadcast = broadcast
@@ -59,11 +67,14 @@ class GraiaScheduler:
         return wrapper
 
     async def run(self) -> None:
+        """开始所有计划任务, 在所有任务结束后返回"""
         await asyncio.gather(*(task.setup_task() for task in self.schedule_tasks))
 
     async def join(self, stop: bool = False) -> None:
+        """等待所有计划任务结束"""
         await asyncio.gather(*(task.join(stop=stop) for task in self.schedule_tasks))
 
     def stop(self) -> None:
+        """停止所有计划任务"""
         for task in self.schedule_tasks:
             task.stop()
