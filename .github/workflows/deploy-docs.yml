@@ -29,7 +29,7 @@ jobs:
         with:
           apiToken: ${{ secrets.CF_PAGES_TOKEN }}
           accountId: ${{ secrets.CF_ACCOUNT_ID }}
-          projectName: graia-ariadne
+          projectName: graia-scheduler
           directory: site
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
 
