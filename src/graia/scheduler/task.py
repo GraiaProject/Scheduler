@@ -101,6 +101,7 @@ class SchedulerTask:
                     with self.sleep_record:
                         try:
                             await coro
+                            continue
                         except asyncio.CancelledError:
                             return
                 try:
