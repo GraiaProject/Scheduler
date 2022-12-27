@@ -11,6 +11,8 @@ class SchedulerService(Launchable):
         scheduler (GraiaScheduler): 任务计划器
     """
 
+    id = "scheduler.service"
+
     def __init__(self, scheduler: GraiaScheduler) -> None:
         self.scheduler = scheduler
 
