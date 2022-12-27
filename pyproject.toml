@@ -12,7 +12,7 @@ dependencies = [
     "launart<1.0.0,>=0.6.1",
 ]
 name = "graia-scheduler"
-version = "0.1.0"
+version = "0.1.1"
 description = "a scheduler for graia framework"
 readme = "README.md"
 [project.optional-dependencies]
