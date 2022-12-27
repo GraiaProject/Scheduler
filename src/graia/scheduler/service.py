@@ -14,6 +14,7 @@ class SchedulerService(Launchable):
     id = "scheduler.service"
 
     def __init__(self, scheduler: GraiaScheduler) -> None:
+        super().__init__()
         self.scheduler = scheduler
 
     @property
