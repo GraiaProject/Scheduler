@@ -30,7 +30,7 @@ class SchedulerService(Launchable):
             pass  # Wait for preparation to complete, then we run tasks
         async with self.stage("blocking"):
             tsk = asyncio.create_task(self.scheduler.run())
-
+            await manager.status.wait_for_sigexit()
         async with self.stage("cleanup"):
             # Stop all schedule tasks
             self.scheduler.stop()

@@ -39,11 +39,9 @@ loop.run_forever()
 
 ```python
 import asyncio
-from launart import Launart
 from graia.broadcast import Broadcast
 from graia.scheduler import GraiaScheduler
 from graia.scheduler.timers import crontabify
-from graia.scheduler.service import SchedulerService
 
 loop = asyncio.new_event_loop()
 
@@ -56,11 +54,7 @@ def something_scheduled():
     print("print every second.")
 
 
-manager = Launart()
-manager.add_service(SchedulerService(scheduler))
-
-manager.launch_blocking(loop=loop)
-
+loop.run_until_complete(scheduler.run())
 ```
 
 因为基于 `BroadcastControl`, 你可以享受使用 `Dispatcher`, `Interrupt`, `Decorator` 的开发体验.
