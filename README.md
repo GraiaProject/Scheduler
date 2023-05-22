@@ -8,11 +8,13 @@
 ```bash
 pip install graia-scheduler
 
-# or use poetry
-poetry add graia-scheduler
+# or use pdm
+pdm add graia-scheduler
 ```
 
 ## 使用
+
+**0.1以前的版本:**
 
 ```python
 import asyncio
@@ -25,11 +27,34 @@ loop = asyncio.new_event_loop()
 bcc = Broadcast(loop=loop)
 scheduler = GraiaScheduler(loop, bcc)
 
+
 @scheduler.schedule(crontabify("* * * * * *"))
 def something_scheduled():
     print("print every second.")
 
 loop.run_forever()
+```
+
+**0.1及后续的版本:**
+
+```python
+import asyncio
+from graia.broadcast import Broadcast
+from graia.scheduler import GraiaScheduler
+from graia.scheduler.timers import crontabify
+
+loop = asyncio.new_event_loop()
+
+bcc = Broadcast(loop=loop)
+scheduler = GraiaScheduler(loop, bcc)
+
+
+@scheduler.schedule(crontabify("* * * * * *"))
+def something_scheduled():
+    print("print every second.")
+
+
+loop.run_until_complete(scheduler.run())
 ```
 
 因为基于 `BroadcastControl`, 你可以享受使用 `Dispatcher`, `Interrupt`, `Decorator` 的开发体验.

@@ -23,14 +23,14 @@ class SchedulerService(Launchable):
 
     @property
     def stages(self) -> Set[Literal["preparing", "blocking", "cleanup"]]:
-        return {"preparing", "cleanup"}
+        return {"preparing", "blocking", "cleanup"}
 
     async def launch(self, manager: Launart):
         async with self.stage("preparing"):
             pass  # Wait for preparation to complete, then we run tasks
-
-        tsk = asyncio.create_task(self.scheduler.run())
-
+        async with self.stage("blocking"):
+            tsk = asyncio.create_task(self.scheduler.run())
+            await manager.status.wait_for_sigexit()
         async with self.stage("cleanup"):
             # Stop all schedule tasks
             self.scheduler.stop()
