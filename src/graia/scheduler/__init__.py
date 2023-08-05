@@ -5,14 +5,14 @@ from graia.broadcast.typing import T_Dispatcher
 
 Timer = Iterable[datetime]
 
-from asyncio import AbstractEventLoop
 import asyncio
+from asyncio import AbstractEventLoop
+from typing import Callable, TypeVar
 
 from graia.broadcast import Broadcast
 from graia.broadcast.entities.decorator import Decorator
 
 from .task import SchedulerTask
-from typing import Callable, TypeVar
 
 T_Callable = TypeVar("T_Callable", bound=Callable)
 

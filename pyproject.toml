@@ -7,9 +7,10 @@ authors = [
 license = {text = "MIT"}
 requires-python = ">=3.8,<4.0"
 dependencies = [
-    "graia-broadcast>=0.19.0",
+    "graia-broadcast~=0.23.0",
     "croniter<2.0.0,>=1.0.0",
     "launart<1.0.0,>=0.6.1",
+    "creart~=0.3.0",
 ]
 name = "graia-scheduler"
 version = "0.1.5"
@@ -18,7 +19,9 @@ readme = "README.md"
 [project.optional-dependencies]
 saya = ["graia-saya>=0.0.16,<0.1"]
 
-[project.urls]
+[project.entry-points."creart.creators"]
+scheduler = "graia.scheduler.creator:SchedulerCreator"
+scheduler_behaviour = "graia.scheduler.creator:SchedulerBehaviourCreator"
 
 [tool.pdm]
 
@@ -43,8 +46,8 @@ includes = ["src/graia"]
 profile = "black"
 
 [build-system]
-requires = ["pdm-pep517>=1.0.0"]
-build-backend = "pdm.pep517.api"
+requires = ["pdm-backend"]
+build-backend = "pdm.backend"
 
 [tool.pyright]
 ignore = ["docs/gen_ref.py"]
