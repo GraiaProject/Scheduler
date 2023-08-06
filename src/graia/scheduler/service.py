@@ -1,10 +1,10 @@
 from typing import Literal, Set
-from launart import Launchable, Launart
+from launart import Service, Launart
 from . import GraiaScheduler
 import asyncio
 
 
-class SchedulerService(Launchable):
+class SchedulerService(Service):
     """GraiaScheduler 的 Launart 服务
 
     Args:

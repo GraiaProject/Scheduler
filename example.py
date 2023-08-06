@@ -1,14 +1,12 @@
-import asyncio
 from launart import Launart
 from graia.broadcast import Broadcast
 from graia.scheduler import GraiaScheduler
 from graia.scheduler.timers import crontabify
 from graia.scheduler.service import SchedulerService
+from creart import it
 
-loop = asyncio.new_event_loop()
-
-bcc = Broadcast(loop=loop)
-scheduler = GraiaScheduler(loop, bcc)
+bcc = it(Broadcast)
+scheduler = it(GraiaScheduler)
 
 
 @scheduler.schedule(crontabify("* * * * * *"))
@@ -17,6 +15,6 @@ def something_scheduled():
 
 
 manager = Launart()
-manager.add_service(SchedulerService(scheduler))
+manager.add_component(SchedulerService(scheduler))
 
-manager.launch_blocking(loop=loop)
+manager.launch_blocking()

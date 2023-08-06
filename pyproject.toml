@@ -9,11 +9,11 @@ requires-python = ">=3.8,<4.0"
 dependencies = [
     "graia-broadcast~=0.23.0",
     "croniter<2.0.0,>=1.0.0",
-    "launart~=0.6.4",
+    "launart>=0.7.0",
     "creart~=0.3.0",
 ]
 name = "graia-scheduler"
-version = "0.2.0"
+version = "0.3.0"
 description = "a scheduler for graia framework"
 readme = "README.md"
 [project.optional-dependencies]

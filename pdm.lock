@@ -6,7 +6,7 @@ groups = ["default", "dev", "docs", "saya"]
 cross_platform = true
 static_urls = false
 lock_version = "4.3"
-content_hash = "sha256:fd1478121e77e73c9568249d65c5037524d897cf1b92c165be74cfe448b44521"
+content_hash = "sha256:1a0b387882e782d41908d0a24789e98e44b3b22b5dc5351701a31f2c98854233"
 
 [[package]]
 name = "black"
@@ -217,15 +217,16 @@ files = [
 
 [[package]]
 name = "graia-saya"
-version = "0.0.17"
-requires_python = ">=3.7,<4.0"
-summary = ""
+version = "0.0.18"
+requires_python = "<4.0,>=3.8"
+summary = "a modular implementation with modern design and injection"
 dependencies = [
+    "importlib-metadata~=6.8; python_version < \"3.10\"",
     "loguru<0.7,>=0.5.3",
 ]
 files = [
-    {file = "graia_saya-0.0.17-py3-none-any.whl", hash = "sha256:d286edd2cc5955c588bb515bdaeadda5fbbf6a60341e0db79772a3181b393e8a"},
-    {file = "graia_saya-0.0.17.tar.gz", hash = "sha256:3d093b9a63733483b57ae677e9e70dfd2b7a12931ca554625cdaf04a34e4f3b2"},
+    {file = "graia_saya-0.0.18-py3-none-any.whl", hash = "sha256:2f72e455c69d418f1c867d39ee0abba41e96f7225148046c96ac8cf14a04f704"},
+    {file = "graia_saya-0.0.18.tar.gz", hash = "sha256:e6255aeeea5feaf7959c1e374512396768cb567995ad1eabc21cb0d40789317e"},
 ]
 
 [[package]]
@@ -289,7 +290,7 @@ files = [
 
 [[package]]
 name = "launart"
-version = "0.6.4"
+version = "0.7.0"
 requires_python = ">=3.8"
 summary = "Component lifetime manager for runtime."
 dependencies = [
@@ -298,8 +299,8 @@ dependencies = [
     "statv>=0.2.2",
 ]
 files = [
-    {file = "launart-0.6.4-py3-none-any.whl", hash = "sha256:bca73b2ff56f09552edb42430fee0566ceff3193d6d767c27b2041650d21049c"},
-    {file = "launart-0.6.4.tar.gz", hash = "sha256:6739a1cd99e1e59ccb538595389268f257120a2488e5fa80d3a21b668d95881c"},
+    {file = "launart-0.7.0-py3-none-any.whl", hash = "sha256:0b27f90a1ef01d00a2bb47b1f81da59a37f0936e1d7b3abe16f5188d0ed2c510"},
+    {file = "launart-0.7.0.tar.gz", hash = "sha256:c6c29175b584c18c89eec2c6353f99a279c1a4444c18cd259fe2ed8bbaab6f5d"},
 ]
 
 [[package]]
