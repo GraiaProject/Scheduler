@@ -4,19 +4,21 @@ on:
     tags:
       - "v*.*.*"
 jobs:
-  publish:
+  build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-
-      - name: Install PDM
-        uses: pdm-project/setup-pdm@main
-
-      - name: Build Package
-        run: pdm build
-
-      - name: Publish to PyPI
-        uses: pypa/gh-action-pypi-publish@release/v1
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v3
+        name: Ensure Python Runtime
         with:
-          password: ${{ secrets.PYPI_TOKEN }}
-          skip_existing: true
+          python-version: '3.x'
+          architecture: 'x64'
+      - name: Ensure PDM & twine
+        run: |
+          python3 -m pip install pdm twine
+      - name: Build Package
+        run: |
+          pdm build
+      - name: Publish to PyPI
+        run: |
+          twine upload dist/* --non-interactive -u __token__ -p ${{ secrets.PYPI_TOKEN }}
